@@ -1,12 +1,11 @@
-{ stdenv
+{ pkgs
+, stdenv
 , fetchurl
 , lib
-
 , binutils-unwrapped
 , xz
 , gnutar
 , file
-
 , glibc
 , glib
 , nss
@@ -30,17 +29,15 @@
 }:
 
 stdenv.mkDerivation rec {
-  pname = "microsoft-edge-dev";
-  version = "88.0.673.0";
+  name = "microsoft-edge-dev";
 
-  src = fetchurl {
-    url = "https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-dev/microsoft-edge-dev_${version}-1_amd64.deb";
-    hash = "sha256-/9ACwjK/tU8jZIvVbkvsYMdOrjXBnx5FwV6EoqEU0+E=";
-  };
-
+  src = /tmp/edge.deb;
+  buildInputs = with pkgs; [
+    xorg.libxshmfence
+  ];
   unpackCmd = ''
-    mkdir -p microsoft-edge-dev-${version}
-    ${binutils-unwrapped}/bin/ar p $src data.tar.xz | ${xz}/bin/xz -dc | ${gnutar}/bin/tar -C microsoft-edge-dev-${version} -xf -
+    mkdir -p microsoft-edge-dev-latest
+    ${binutils-unwrapped}/bin/ar p $src data.tar.xz | ${xz}/bin/xz -dc | ${gnutar}/bin/tar -C microsoft-edge-dev-latest -xf -
   '';
 
   dontConfigure = true;
